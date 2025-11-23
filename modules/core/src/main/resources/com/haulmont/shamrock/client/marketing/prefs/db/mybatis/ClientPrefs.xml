@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.db.mybatis">
+
+    <resultMap id="ClientPrefsMap" type="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
+        <id property="clientId" column="client_id"/>
+        <result property="clientUid" column="client_uid"/>
+        <result property="clientEmail" column="client_email"/>
+        <result property="prefs" column="prefs"/>
+    </resultMap>
+
+    <sql id="selectClientPrefs">
+        select client_id, client_uid, client_email, prefs from client_prefs
+    </sql>
+
+    <select id="getClientPrefs" resultMap="ClientPrefsMap"
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+        <include refid="selectClientPrefs"/>
+        where
+        <choose>
+            <when test="id != null">
+                client_id = #{id}::uuid
+            </when>
+            <when test="uid != null">
+                client_uid = #{uid}
+            </when>
+            <otherwise>
+                client_email = #{email}
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="addClientPrefs" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
+        insert into client_prefs (client_id, client_uid, client_email, prefs)
+        values (#{clientId}::uuid, #{clientUid}, #{clientEmail}, #{prefs}::jsonb)
+    </insert>
+
+    <update id="updateClientPrefs" parameterType="Map">
+        update client_prefs set
+        <trim suffixOverrides=",">
+            <if test="value.clientId != null">
+                client_id = #{value.clientId}::uuid,
+            </if>
+            <if test="value.clientUid != null">
+                client_uid = #{value.clientUid},
+            </if>
+            <if test="value.clientEmail != null">
+                client_email = #{value.clientEmail},
+            </if>
+            <if test="value.prefs != null">
+                prefs = #{value.prefs}::jsonb,
+            </if>
+        </trim>
+        where
+        <choose>
+            <when test="key.id != null">
+                client_id = #{key.id}::uuid
+            </when>
+            <when test="key.uid != null">
+                client_uid = #{key.uid}
+            </when>
+            <otherwise>
+                client_email = #{key.email}
+            </otherwise>
+        </choose>
+    </update>
+
+    <delete id="deleteClientPrefs" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+        delete from client_prefs where
+        <choose>
+            <when test="id != null">
+                client_id = #{id}::uuid
+            </when>
+            <when test="uid != null">
+                client_uid = #{uid}
+            </when>
+            <otherwise>
+                client_email = #{email}
+            </otherwise>
+        </choose>
+    </delete>
+
+</mapper>

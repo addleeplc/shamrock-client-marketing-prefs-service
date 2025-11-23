@@ -1,3 +1,9 @@
+/*
+ * Copyright 2008 - 2025 Haulmont Technology Ltd. All Rights Reserved.
+ * Haulmont Technology proprietary and confidential.
+ * Use is subject to license terms.
+ */
+
 package com.haulmont.shamrock.client.marketing.prefs.model;
 
 import java.util.UUID;
@@ -7,14 +13,6 @@ public class ClientPrefs {
     private String clientUid;
     private String clientEmail;
     private String prefs;
-
-    public String getClientEmail() {
-        return clientEmail;
-    }
-
-    public void setClientEmail(String clientEmail) {
-        this.clientEmail = clientEmail;
-    }
 
     public UUID getClientId() {
         return clientId;
@@ -30,6 +28,14 @@ public class ClientPrefs {
 
     public void setClientUid(String clientUid) {
         this.clientUid = clientUid;
+    }
+
+    public String getClientEmail() {
+        return clientEmail;
+    }
+
+    public void setClientEmail(String clientEmail) {
+        this.clientEmail = clientEmail;
     }
 
     public String getPrefs() {

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.db.mybatis">
+
+    <resultMap id="CategoryTreeMap" type="com.haulmont.shamrock.client.marketing.prefs.model.Category">
+        <id property="id" column="id"/>
+        <result property="createTs" column="create_ts"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="parentCategoryId" column="parent_category_id"/>
+
+        <collection property="children"
+                    ofType="com.haulmont.shamrock.client.marketing.prefs.model.Category"
+                    select="getChildrenByParentId"
+                    column="id"/>
+
+        <collection property="channels" ofType="com.haulmont.shamrock.client.marketing.prefs.model.CategoryChannel"
+                    javaType="list">
+            <id property="id" column="channel_id"/>
+            <result property="code" column="channel_code"/>
+            <result property="optIn" column="opt_in"/>
+            <result property="editable" column="editable"/>
+        </collection>
+    </resultMap>
+
+    <sql id="selectCategories">
+        <![CDATA[
+            select
+                c.id, c.create_ts, c.created_by, c.code, c.name, c.description, c.parent_category_id,
+                ch.id as channel_id, ch.code as channel_code, cc.opt_in, cc.editable
+            from categories c
+                left join category_channels cc on cc.category_id = c.id
+                left join channels ch on ch.id = cc.channel_id
+        ]]>
+    </sql>
+
+    <select id="getCategories" resultMap="CategoryTreeMap">
+        <include refid="selectCategories"/>
+        where c.parent_category_id is null
+          and c.delete_ts is null
+    </select>
+
+    <select id="getCategory" resultMap="CategoryTreeMap" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId">
+        <include refid="selectCategories"/>
+        where c.delete_ts is null
+        <choose>
+            <when test="id != null">
+                and c.id = #{id}::uuid
+            </when>
+            <otherwise>
+                and c.code = #{code}
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getChildrenByParentId" parameterType="java.util.UUID" resultMap="CategoryTreeMap">
+        <include refid="selectCategories"/>
+        where c.parent_category_id = #{parentId}::uuid
+          and c.delete_ts is null
+        order by c.code
+    </select>
+
+    <insert id="addCategory" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.Category"
+            useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+            insert into categories as cat (id, create_ts, created_by, update_ts, updated_by, code, name, description, parent_category_id)
+            values (#{id}::uuid, #{createTs}, #{createdBy}, #{updatedBy}, #{updatedBy}, #{code}, #{name}, #{description}, #{parentCategoryId}::uuid)
+            on conflict (code) do update set
+                create_ts = #{createTs},
+                created_by = #{createdBy},
+                update_ts = #{updatedBy},
+                updated_by = #{updatedBy},
+                delete_ts = null,
+                deleted_by = null,
+                code = #{code},
+                name = #{name},
+                description = #{description},
+                parent_category_id = #{parentCategoryId}::uuid
+            returning id
+        ]]>
+    </insert>
+
+    <insert id="insertCategoryChannel" parameterType="Map">
+        insert into category_channels as cc (id, create_ts, created_by, channel_id, category_id, opt_in, editable)
+        values (uuid_generate_v4()::uuid, #{channel.createTs}, #{channel.createdBy}, #{channel.id}::uuid, #{category.id}::uuid,
+        #{channel.optIn}, #{channel.editable})
+        on conflict (category_id, channel_id) do update set
+        <trim suffixOverrides=",">
+            <if test="channel.optIn != null">
+                opt_in = #{channel.optIn},
+            </if>
+            <if test="channel.editable != null">
+                editable = #{channel.editable},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="updateCategory-merge" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.Category"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into categories as cat (id, create_ts, created_by, update_ts, updated_by, code, name, description, parent_category_id)
+        values (#{id}::uuid, #{createTs}, #{createdBy}, #{updateTs}, #{updatedBy}, #{code}, #{name}, #{description}, #{parentCategoryId}::uuid)
+        on conflict (id) do update set
+        <trim suffixOverrides=",">
+            update_ts = #{updateTs},
+            updated_by = #{updatedBy},
+            delete_ts = null,
+            deleted_by = null,
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+        </trim>
+        returning id
+    </insert>
+
+    <delete id="updateCategory-del-old-channels"
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.Category">
+        delete from category_channels
+        where category_id = #{id}::uuid
+        <trim suffix=";">
+            <if test="channels != null and channels.size > 0">
+                and channel_id not in
+                <foreach item="ch" collection="channels" open="(" separator="," close=")">
+                    #{ch.id}::uuid
+                </foreach>
+            </if>
+        </trim>
+    </delete>
+
+    <delete id="deleteCategory" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId">
+        update categories
+        set delete_ts = now(), deleted_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}'
+        where delete_ts is null
+        <choose>
+            <when test="id != null">
+                and id = #{id}::uuid
+            </when>
+            <otherwise>
+                and code = #{code}
+            </otherwise>
+        </choose>
+    </delete>
+
+</mapper>

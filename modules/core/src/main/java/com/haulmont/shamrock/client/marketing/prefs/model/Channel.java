@@ -2,22 +2,10 @@ package com.haulmont.shamrock.client.marketing.prefs.model;
 
 import org.joda.time.DateTime;
 
-import java.util.UUID;
-
-public class Channel {
-    private UUID id;
+public class Channel extends ModelInstanceId {
     private DateTime createTs;
     private String createdBy;
-    private String code;
     private String name;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getCreatedBy() {
         return createdBy;
@@ -33,14 +21,6 @@ public class Channel {
 
     public void setCreateTs(DateTime createTs) {
         this.createTs = createTs;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {

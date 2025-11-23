@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.db.mybatis">
+
+    <resultMap id="ChannelMap" type="com.haulmont.shamrock.client.marketing.prefs.model.Channel">
+        <id property="id" column="id"/>
+        <result property="createTs" column="create_ts"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getChannels" resultMap="ChannelMap">
+        select id, create_ts, created_by, code, name
+        from channels
+        where delete_ts is null
+    </select>
+
+    <select id="getChannel" resultMap="ChannelMap"
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId">
+        select id, create_ts, created_by, code, name
+        from channels
+        where delete_ts is null
+        <choose>
+            <when test="id != null">
+                and id = #{id}::uuid
+            </when>
+            <otherwise>
+                and code = #{code}
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="addChannel" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.Channel"
+            useGeneratedKeys="true" keyProperty="id">
+        <![CDATA[
+            insert into channels as ch (id, create_ts, created_by, update_ts, updated_by, code, name)
+            values (#{id}::uuid, #{createTs}, #{createdBy}, #{createTs}, #{createdBy}, #{code}, #{name})
+            on conflict (code) do update set
+                create_ts = #{createTs},
+                created_by = #{createdBy},
+                update_ts = #{createTs},
+                updated_by = #{createdBy},
+                delete_ts = null,
+                deleted_by = null,
+                name = #{name}
+            returning id
+        ]]>
+    </insert>
+
+    <update id="updateChannel" parameterType="Map">
+        update channels set
+        <trim  suffixOverrides=",">
+            update_ts = now(),
+            updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+            <if test="value.code != null">
+                code = #{value.code},
+            </if>
+            <if test="value.name != null">
+                name = #{value.name},
+            </if>
+        </trim>
+        where delete_ts is null
+        <choose>
+            <when test="key.id != null">
+                and id = #{key.id}::uuid
+            </when>
+            <otherwise>
+                and code = #{key.code}
+            </otherwise>
+        </choose>
+    </update>
+
+    <delete id="deleteChannel" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId">
+        update channels
+        set delete_ts = now(), deleted_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}'
+        where delete_ts is null
+        <choose>
+            <when test="id != null">
+                and id = #{id}::uuid
+            </when>
+            <otherwise>
+                and code = #{code}
+            </otherwise>
+        </choose>
+    </delete>
+
+</mapper>

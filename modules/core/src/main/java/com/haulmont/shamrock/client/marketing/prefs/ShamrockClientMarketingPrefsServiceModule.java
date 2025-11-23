@@ -9,13 +9,19 @@ import com.haulmont.monaco.container.ModuleLoader;
                 "monaco-jetty",
                 "monaco-core",
                 "monaco-config",
+                "monaco-model",
                 "monaco-graylog-reporter",
-                "monaco-sentry-reporter"
+                "monaco-sentry-reporter",
+                "monaco-mybatis",
+                "monaco-ds-sybase",
+                "monaco-ds-postgresql",
+                "monaco-rabbit-mq",
+                "monaco-unirest"
         }
 )
 public class ShamrockClientMarketingPrefsServiceModule extends ModuleLoader {
 
-    public ShamrockClientMarketingPrefsServiceModule () {
+    public ShamrockClientMarketingPrefsServiceModule() {
         super();
         packages(ShamrockClientMarketingPrefsServiceModule.class.getPackageName());
     }

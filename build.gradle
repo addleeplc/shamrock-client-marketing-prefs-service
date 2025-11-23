@@ -75,6 +75,10 @@ def rs_module = project(":${rootProject.name}-rs")
 
 def monaco_version = '3.4-SNAPSHOT'
 
+ext {
+    jackson_version = '2.15.1'
+}
+
 configure([core_module, rs_module]) {
     apply(plugin: 'java')
     apply(plugin: 'idea')
@@ -113,14 +117,23 @@ configure(core_module) {
         compile(group: 'com.haulmont.monaco', name: 'monaco-graylog-reporter', version: "$monaco_version")
         compile(group: 'com.haulmont.monaco', name: 'monaco-sentry-reporter', version: "$monaco_version")
 
+        compile(group: 'com.haulmont.monaco', name: 'monaco-mybatis', version: "$monaco_version")
+        compile(group: 'com.haulmont.monaco', name: 'monaco-ds-postgresql', version: "$monaco_version")
+        compile(group: 'com.haulmont.monaco', name: 'monaco-ds-sybase', version: "$monaco_version")
 
+        compile(group: 'com.haulmont.monaco', name: 'monaco-rabbit-mq', version: "$monaco_version")
+        compile(group: 'com.haulmont.monaco', name: 'monaco-model', version: "$monaco_version")
+        compile(group: 'com.haulmont.monaco', name: 'monaco-unirest', version: "$monaco_version")
+
+        compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jackson_version)
+        compile(group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: jackson_version)
+        compile(group: 'com.fasterxml.jackson.module', name: 'jackson-module-jaxb-annotations', version: jackson_version)
     }
 
     task deploy(dependsOn: assemble, type: ShamrockDeployJettyTask) {
         excludeConfigDirs = ['database-scripts', 'jetty-conf']
         appJars(core_module.name)
     }
-
 }
 
 configure(rs_module) {

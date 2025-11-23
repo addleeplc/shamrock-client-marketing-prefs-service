@@ -11,5 +11,6 @@ gradlew.bat
 jetty_base
 jetty_home
 
+/build/
 modules/core/build/
 modules/rs/build/

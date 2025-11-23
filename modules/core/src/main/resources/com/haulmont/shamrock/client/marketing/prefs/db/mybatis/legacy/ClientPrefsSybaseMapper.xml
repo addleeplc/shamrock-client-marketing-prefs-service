@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.db.mybatis">
+
+    <resultMap id="PreferencesMap" type="com.haulmont.shamrock.client.marketing.prefs.legacy.model.Preferences">
+        <id property="id" column="ID"/>
+        <result property="uid" column="UID"/>
+        <result property="prefs" column="PREFERENCES"/>
+        <result property="emailOptOut" column="MARKETING_EMAIL_OPT_OUT"/>
+        <result property="smsOptOut" column="MARKETING_SMS_OPT_OUT"/>
+        <result property="callOptOut" column="MARKETING_CALL_OPT_OUT"/>
+        <result property="pushOptOut" column="MARKETING_PUSH_OPT_OUT"/>
+    </resultMap>
+
+    <select id="loadImage" timeout="30" useCache="false" resultMap="PreferencesMap"
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+        <![CDATA[
+            select
+              i.UUID as ID,
+              ri.AUTH0_UID as UID,
+              img.DATA as PREFERENCES,
+              null as MARKETING_EMAIL_OPT_OUT,
+              null as MARKETING_SMS_OPT_OUT,
+              null as MARKETING_CALL_OPT_OUT,
+              null as MARKETING_PUSH_OPT_OUT
+            from SL_IMAGES img
+              join SL_REGISTRATION_INFOS ri on ri.DATA_ID = img.ID and ri.IS_DELETED = 0
+              join SL_INDIVIDUALS i on i.ID = ri.INDIVIDUAL_ID and i.IS_DELETED = 0
+            where img.IS_DELETED = 0
+              and ri.AUTH0_UID = #{uid}
+        ]]>
+    </select>
+
+    <select id="loadPreferences" timeout="30" useCache="false" resultMap="PreferencesMap"
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+        <![CDATA[
+            select
+              i.UUID as ID,
+              null as UID,
+              null as PREFERENCES,
+              i.MARKETING_EMAIL_OPT_OUT,
+              i.MARKETING_SMS_OPT_OUT,
+              i.MARKETING_CALL_OPT_OUT,
+              i.MARKETING_PUSH_OPT_OUT
+            from SL_INDIVIDUALS i
+            where i.IS_DELETED = 0
+              and i.UUID = #{id}
+        ]]>
+    </select>
+</mapper>

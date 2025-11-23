@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <setting name="cacheEnabled" value="false"/>
+        <setting name="lazyLoadingEnabled" value="false"/>
+        <setting name="multipleResultSetsEnabled" value="true"/>
+    </settings>
+
+    <typeHandlers>
+        <typeHandler javaType="org.joda.time.DateTime" handler="com.haulmont.monaco.mybatis.type.DateTimeTypeHandler"/>
+        <typeHandler javaType="java.util.UUID" handler="com.haulmont.monaco.mybatis.type.UUIDTypeHandler"/>
+    </typeHandlers>
+
+    <environments default="shamrock-client-marketing-prefs">
+        <environment id="shamrock-client-marketing-prefs">
+            <transactionManager type="JDBC"/>
+            <dataSource type="com.haulmont.monaco.mybatis.DataSourceFactory">
+                <property name="ds-name" value="shamrock-client-marketing-prefs-ds"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/db/mybatis/Categories.xml"/>
+        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/db/mybatis/Channels.xml"/>
+        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/db/mybatis/ClientPrefs.xml"/>
+    </mappers>
+
+</configuration>

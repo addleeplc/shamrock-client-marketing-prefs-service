@@ -16,4 +16,8 @@
         <appender-ref ref="MONACO_APP"/>
     </logger>
 
+    <logger name="org.mybatis" level="DEBUG"/>
+    <logger name="java.sql" level="DEBUG"/>
+    <logger name="jdbc.sqlonly" level="DEBUG"/>
+
 </configuration>
