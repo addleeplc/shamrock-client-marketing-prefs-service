@@ -13,10 +13,15 @@
         <result property="name" column="name"/>
     </resultMap>
 
-    <select id="getChannels" resultMap="ChannelMap">
+    <sql id="channels">
         select id, create_ts, created_by, code, name
         from channels
         where delete_ts is null
+    </sql>
+
+    <select id="getChannels" resultMap="ChannelMap">
+        <include refid="channels"/>
+        order by ord nulls last
     </select>
 
     <select id="getChannel" resultMap="ChannelMap"
