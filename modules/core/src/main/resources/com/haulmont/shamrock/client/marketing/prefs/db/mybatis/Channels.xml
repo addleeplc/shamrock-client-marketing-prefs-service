@@ -21,7 +21,7 @@
 
     <select id="getChannels" resultMap="ChannelMap">
         <include refid="channels"/>
-        order by create_ts
+        order by ord nulls last
     </select>
 
     <select id="getChannel" resultMap="ChannelMap"
