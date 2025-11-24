@@ -163,7 +163,7 @@ public class CategoriesRepository extends AbstractRepository<ClientMarketingPref
                     session.insert(getName() + "-merge", patch);
                 }
 
-                if (CollectionUtils.isNotEmpty(patch.getChannels())) {
+                if (patch.getChannels() != null) {
                     for (CategoryChannel channel : patch.getChannels()) {
 
                         session.insert("insertCategoryChannel", Map.of(
