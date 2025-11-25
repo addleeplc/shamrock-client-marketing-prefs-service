@@ -78,7 +78,6 @@
                 updated_by = #{updatedBy},
                 delete_ts = null,
                 deleted_by = null,
-                code = #{code},
                 name = #{name},
                 description = #{description},
                 parent_category_id = #{parentCategoryId}::uuid
@@ -111,9 +110,6 @@
             updated_by = #{updatedBy},
             delete_ts = null,
             deleted_by = null,
-            <if test="code != null">
-                code = #{code},
-            </if>
             <if test="name != null">
                 name = #{name},
             </if>

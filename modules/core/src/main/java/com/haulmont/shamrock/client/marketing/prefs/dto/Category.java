@@ -1,6 +1,7 @@
 package com.haulmont.shamrock.client.marketing.prefs.dto;
 
 import com.fasterxml.jackson.annotation.*;
+import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
 
 import java.util.Collection;
 
@@ -9,15 +10,19 @@ import java.util.Collection;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Category extends Identifier {
     @JsonProperty("name")
+    @JsonView(Views.All.class)
     protected String name;
 
     @JsonProperty("description")
+    @JsonView(Views.All.class)
     protected String description;
 
     @JsonProperty("channels")
+    @JsonView(Views.All.class)
     private Collection<Channel> channels;
 
     @JsonProperty("categories")
+    @JsonView(Views.All.class)
     private Collection<Category> categories;
 
     public String getName() {
@@ -57,16 +62,19 @@ public class Category extends Identifier {
     @JsonIgnoreProperties(ignoreUnknown = true, value = {"id", "code"})
     public static class Channel extends Identifier {
         @JsonProperty("opt_in")
+        @JsonView(Views.Store.class)
         private OptIn optIn;
 
         @Override
         @JsonProperty("channel_code")
+        @JsonView(Views.Store.class)
         public String getCode() {
             return super.getCode();
         }
 
         @Override
         @JsonProperty("channel_code")
+        @JsonView(Views.Store.class)
         public void setCode(String code) {
             super.setCode(code);
         }
@@ -85,9 +93,11 @@ public class Category extends Identifier {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class OptIn {
         @JsonProperty("default")
+        @JsonView(Views.Store.class)
         private Boolean optIn;
 
         @JsonProperty("editable")
+        @JsonView(Views.Store.class)
         private Boolean editable;
 
         public Boolean getEditable() {

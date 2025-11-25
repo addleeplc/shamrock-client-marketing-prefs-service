@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "opt_in": {
+      "type": "boolean"
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "opt_in": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "opt_in"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/categoryItem"
+      }
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "definitions": {
+    "categoryItem": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "code": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "anyOf": [
+            {
+              "required": [
+                "id"
+              ]
+            },
+            {
+              "required": [
+                "code"
+              ]
+            }
+          ],
+          "additionalProperties": false
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "opt_in": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "code",
+              "opt_in"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/categoryItem"
+          }
+        }
+      },
+      "required": [],
+      "anyOf": [
+        {
+          "required": [
+            "category"
+          ]
+        },
+        {
+          "required": [
+            "channels"
+          ]
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,15 +1,14 @@
 package com.haulmont.shamrock.client.marketing.prefs.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
+import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
 
 @JsonPropertyOrder({"id", "code", "name"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Channel extends Identifier {
     @JsonProperty("name")
+    @JsonView(Views.Store.class)
     private String name;
 
     public String getName() {

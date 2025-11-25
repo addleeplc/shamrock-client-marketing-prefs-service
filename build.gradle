@@ -131,7 +131,7 @@ configure(core_module) {
     }
 
     task deploy(dependsOn: assemble, type: ShamrockDeployJettyTask) {
-        excludeConfigDirs = ['database-scripts', 'jetty-conf']
+        excludeConfigDirs = ['database-scripts', 'jetty-conf', 'schema']
         appJars(core_module.name)
     }
 }
