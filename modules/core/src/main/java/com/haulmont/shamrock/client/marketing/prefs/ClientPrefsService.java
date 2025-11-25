@@ -20,6 +20,7 @@ import com.haulmont.shamrock.client.marketing.prefs.db.ClientPrefsRepository;
 import com.haulmont.shamrock.client.marketing.prefs.dto.*;
 import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences.CategoryOptIn;
 import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences.ChannelOptIn;
+import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
 import com.haulmont.shamrock.client.marketing.prefs.legacy.ShamrockClientPrefsService;
 import com.haulmont.shamrock.client.marketing.prefs.mq.ClientPrefsMessagingService;
 import com.haulmont.shamrock.client.marketing.prefs.utils.ClientPrefsUtils;
@@ -129,7 +130,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
         prepareClientId(id);
         prepareClientPrefs(preferences);
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferences);
+        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferences, Views.Store.class);
 
         doCacheMutatingAction(id, () -> {
             if (!clientPrefsRepository.add(prefs)) {
@@ -149,7 +150,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
         prepareClientId(id);
 
         com.haulmont.shamrock.client.marketing.prefs.model.ClientId clientId = ClientPrefsUtils.convert(id);
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferencesCache.getDefault());
+        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferencesCache.getDefault(), Views.Store.class);
 
         doCacheMutatingAction(id, () -> {
             if (clientPrefsRepository.update(clientId, prefs) == 0) {
@@ -157,7 +158,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
             }
         });
 
-        ClientPrefs res = ClientPrefsUtils.convert(prefs);
+        ClientPrefs res = get(id);
         if (res != null) {
             clientPrefsMessagingService.publish(res.getPreferences());
         }
@@ -174,7 +175,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
         ClientPrefs clientPrefs = get(id);
         Preferences updatedPrefs = applyPreferencesChanges(preferences, clientPrefs.getPreferences());
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, updatedPrefs);
+        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, updatedPrefs, Views.Store.class);
 
         doCacheMutatingAction(id, () -> {
             if (clientPrefsRepository.update(clientId, prefs) == 0) {
@@ -182,7 +183,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
             }
         });
 
-        ClientPrefs res = ClientPrefsUtils.convert(prefs);
+        ClientPrefs res = get(id);
         if (res != null) {
             clientPrefsMessagingService.publish(res.getPreferences());
         }
@@ -253,6 +254,10 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
         }
 
         Category cat = category.getCategory();
+        if (!cat.isDefined()) {
+            throw new ServiceException(ErrorCode.BAD_REQUEST, "Category without id or code found (category: " + category.getCategory() + ")");
+        }
+
         Category cached = categoriesService.get(cat);
         if (cached == null) {
             throw new ServiceException(ErrorCode.BAD_REQUEST, "Category isn't found (category: " + category.getCategory() + ")");

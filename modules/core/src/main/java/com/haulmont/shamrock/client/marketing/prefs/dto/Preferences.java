@@ -1,9 +1,7 @@
 package com.haulmont.shamrock.client.marketing.prefs.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.*;
+import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
@@ -16,12 +14,15 @@ import java.util.stream.Collectors;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Preferences {
     @JsonProperty("opt_in")
+    @JsonView(Views.Store.class)
     protected Boolean optIn;
 
     @JsonProperty("channels")
+    @JsonView(Views.Store.class)
     protected Collection<ChannelOptIn> channels;
 
     @JsonProperty("categories")
+    @JsonView(Views.Store.class)
     protected Collection<CategoryOptIn> categories;
 
     public Boolean getOptIn() {
@@ -53,12 +54,15 @@ public class Preferences {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CategoryOptIn {
         @JsonProperty("category")
+        @JsonView(Views.Store.class)
         protected Category category;
 
         @JsonProperty("channels")
+        @JsonView(Views.Store.class)
         protected Collection<ChannelOptIn> channels;
 
         @JsonProperty("categories")
+        @JsonView(Views.Store.class)
         protected Collection<CategoryOptIn> categories;
 
         public Category getCategory() {
@@ -113,9 +117,11 @@ public class Preferences {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ChannelOptIn {
         @JsonProperty("code")
+        @JsonView(Views.Store.class)
         protected String code;
 
         @JsonProperty("opt_in")
+        @JsonView(Views.Store.class)
         protected Boolean optIn;
 
         public String getCode() {

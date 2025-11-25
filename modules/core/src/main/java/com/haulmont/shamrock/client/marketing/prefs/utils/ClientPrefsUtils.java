@@ -36,6 +36,10 @@ public final class ClientPrefsUtils {
     }
 
     public static com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs convert(ClientId id, Preferences preferences) {
+        return convert(id, preferences, null);
+    }
+
+    public static com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs convert(ClientId id, Preferences preferences, Class<?> view) {
         if (id == null) {
             return null;
         }
@@ -47,7 +51,7 @@ public final class ClientPrefsUtils {
         res.setClientEmail(id.getEmail());
 
         try {
-            String prefs = OBJECT_MAPPER.writeValueAsString(preferences);
+            String prefs = view == null ? OBJECT_MAPPER.writeValueAsString(preferences) : OBJECT_MAPPER.writerWithView(view).writeValueAsString(preferences);
             res.setPrefs(prefs);
         } catch (JsonProcessingException e) {
             throw new ServiceException(ErrorCode.BAD_REQUEST, "Can't render preferences from the request (client: " + id + ")", e);

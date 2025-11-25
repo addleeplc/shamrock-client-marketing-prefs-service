@@ -2,6 +2,7 @@ package com.haulmont.shamrock.client.marketing.prefs.dto;
 
 import com.fasterxml.jackson.annotation.*;
 import com.haulmont.bali.lang.StringUtils;
+import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -11,12 +12,15 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ClientId {
     @JsonProperty("id")
+    @JsonView(Views.Store.class)
     protected UUID id;
 
     @JsonProperty("uid")
+    @JsonView(Views.Store.class)
     protected String uid;
 
     @JsonProperty("email")
+    @JsonView(Views.Store.class)
     private String email;
 
     public UUID getId() {
