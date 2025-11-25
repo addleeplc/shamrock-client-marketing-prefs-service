@@ -61,9 +61,6 @@
         <trim  suffixOverrides=",">
             update_ts = now(),
             updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
-            <if test="value.code != null">
-                code = #{value.code},
-            </if>
             <if test="value.name != null">
                 name = #{value.name},
             </if>
