@@ -15,6 +15,9 @@ update public.channels set ord = 3 where id = '6c340c6e-d80a-41bb-b865-c9f264ab2
 --changeset preobrazhenskiimy:SM-795-4-channels-update-4
 update public.channels set ord = 4 where id = 'd6f37608-c3b5-db88-5cfa-0255ef1605b8';
 
+--changeset preobrazhenskiimy:SM-795-4-channels-update-5
+update public.channels set name = 'WhatsApp' where id = 'd6f37608-c3b5-db88-5cfa-0255ef1605b8';
+
 --changeset preobrazhenskiimy:SM-795-4-categories-alter-1
 alter table public.categories add column ord smallint;
 
