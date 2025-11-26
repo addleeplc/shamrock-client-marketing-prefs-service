@@ -89,8 +89,10 @@ public abstract class AbstractService {
         protected <R extends HttpRequest<?>> R addHeaders(R request) {
             final Properties properties = AppContext.getConfig().getProperties(SERVICES_CONFIG_PATH);
 
-            for (String headerName : RQ_HEADERS.keySet()) {
-                String headerValue = properties.getProperty(headerName);
+            for (String propName : RQ_HEADERS.keySet()) {
+                String propKey = service + "." + propName;
+                String headerName = RQ_HEADERS.get(propName);
+                String headerValue = properties.getProperty(propKey);
                 if (StringUtils.isNoneBlank(headerValue)) {
                     request = (R) request.header(headerName, headerValue);
                 }
