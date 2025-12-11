@@ -26,7 +26,7 @@
         <if test="uid != null">
             and client_uid = #{uid}
         </if>
-        <if test="email != null">
+        <if test="(id == null and uid != null) and email != null">
             and client_email = #{email}
         </if>
     </select>
@@ -54,7 +54,7 @@
         <if test="clientUid != null">
             and client_uid = #{clientUid}
         </if>
-        <if test="(clientId == null or clientUid == null) and clientEmail != null">
+        <if test="(clientId == null and clientUid != null) and clientEmail != null">
             and client_email = #{clientEmail}
         </if>
     </update>
@@ -96,7 +96,7 @@
         <if test="key.uid != null">
             and client_uid = #{key.uid}
         </if>
-        <if test="(key.id == null or key.uid == null) and key.email != null">
+        <if test="(key.id == null and key.uid != null) and key.email != null">
             and client_email = #{key.email}
         </if>
     </update>
@@ -111,7 +111,7 @@
         <if test="uid != null">
             and client_uid = #{uid}
         </if>
-        <if test="email != null">
+        <if test="(id == null and uid != null) and email != null">
             and client_email = #{email}
         </if>
     </update>
