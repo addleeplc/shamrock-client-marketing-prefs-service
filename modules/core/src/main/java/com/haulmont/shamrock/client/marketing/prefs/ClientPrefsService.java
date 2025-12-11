@@ -202,7 +202,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
                 if (client.getId() != null) {
                     id.setId(client.getId());
                 }
-                if (StringUtils.isNoneBlank(client.getEmail())) {
+                if (StringUtils.isNoneBlank(client.getEmail()) && StringUtils.isNotBlank(id.getUid())) {
                     id.setEmail(client.getEmail());
                 }
             }

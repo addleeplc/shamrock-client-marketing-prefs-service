@@ -11,7 +11,7 @@ insert into public.channels(id, create_ts, created_by, code, name) values
     ('a33ef2b8-5e3b-4f2f-ab96-0cb1dd9a943d', '2025-01-01 00:01:00', 'service', 'push', 'Push Notifications'),
     ('ac082a77-c95a-409c-a87d-80e5a7b5af06', '2025-01-01 00:02:00', 'service', 'email', 'Email'),
     ('6c340c6e-d80a-41bb-b865-c9f264ab23f5', '2025-01-01 00:03:00', 'service', 'sms', 'SMS'),
-    ('d6f37608-c3b5-db88-5cfa-0255ef1605b8', '2025-01-01 00:04:00', 'service', 'whatsapp', 'Whatsapp');
+    ('d6f37608-c3b5-db88-5cfa-0255ef1605b8', '2025-01-01 00:04:00', 'service', 'whatsapp', 'WhatsApp');
 
 --changeset preobrazhenskiimy:SM-795-2-categories-fill-1
 insert into public.categories(id, create_ts, created_by, code, name, description, parent_category_id) values

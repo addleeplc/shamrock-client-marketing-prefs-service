@@ -19,28 +19,79 @@
     <select id="getClientPrefs" resultMap="ClientPrefsMap"
             parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
         <include refid="selectClientPrefs"/>
-        where
-        <choose>
-            <when test="id != null">
-                client_id = #{id}::uuid
-            </when>
-            <when test="uid != null">
-                client_uid = #{uid}
-            </when>
-            <otherwise>
-                client_email = #{email}
-            </otherwise>
-        </choose>
+        where delete_ts is null
+        <if test="id != null">
+            and client_id = #{id}::uuid
+        </if>
+        <if test="uid != null">
+            and client_uid = #{uid}
+        </if>
+        <if test="(id == null and uid != null) and email != null">
+            and client_email = #{email}
+        </if>
+        order by update_ts desc nulls last
+        limit 1
     </select>
 
-    <insert id="addClientPrefs" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
-        insert into client_prefs (client_id, client_uid, client_email, prefs)
-        values (#{clientId}::uuid, #{clientUid}, #{clientEmail}, #{prefs}::jsonb)
+    <update id="addClientPrefs-recover-deleted" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
+        <![CDATA[
+            update client_prefs cp set
+                create_ts = now(),
+                created_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+                update_ts = now(),
+                updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+                delete_ts = null,
+                deleted_by = null,
+        ]]>
+        <![CDATA[
+            client_id = #{clientId}::uuid,
+            client_uid = #{clientUid},
+            client_email = #{clientEmail},
+            prefs = #{prefs}::jsonb
+        ]]>
+        <![CDATA[
+            from (
+              select client_id, client_uid, client_email
+              from client_prefs
+              where delete_ts is not null
+        ]]>
+        <if test="clientId != null">
+            and client_id = #{clientId}::uuid
+        </if>
+        <if test="clientUid != null">
+            and client_uid = #{clientUid}
+        </if>
+        <if test="(clientId == null and clientUid != null) and clientEmail != null">
+            and client_email = #{clientEmail}
+        </if>
+        <![CDATA[
+              order by update_ts desc nulls last
+              limit 1
+            ) sub
+            where cp.delete_ts is not null
+              and (cp.client_id is not distinct from sub.client_id)
+              and (cp.client_uid is not distinct from sub.client_uid)
+              and (cp.client_email is not distinct from sub.client_email)
+        ]]>
+    </update>
+
+    <insert id="addClientPrefs-add-new" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
+        <![CDATA[
+            insert into client_prefs (client_id, client_uid, client_email, create_ts, created_by, update_ts, updated_by, prefs)
+            values (
+                #{clientId}::uuid, #{clientUid}, #{clientEmail},
+                now(), '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+                now(), '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+                #{prefs}::jsonb
+            )
+        ]]>
     </insert>
 
     <update id="updateClientPrefs" parameterType="Map">
-        update client_prefs set
+        update client_prefs cp set
         <trim suffixOverrides=",">
+            update_ts = now(),
+            updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
             <if test="value.clientId != null">
                 client_id = #{value.clientId}::uuid,
             </if>
@@ -54,33 +105,45 @@
                 prefs = #{value.prefs}::jsonb,
             </if>
         </trim>
-        where
-        <choose>
-            <when test="key.id != null">
-                client_id = #{key.id}::uuid
-            </when>
-            <when test="key.uid != null">
-                client_uid = #{key.uid}
-            </when>
-            <otherwise>
-                client_email = #{key.email}
-            </otherwise>
-        </choose>
+        <![CDATA[
+            from (
+              select client_id, client_uid, client_email
+              from client_prefs
+              where delete_ts is null
+        ]]>
+        <if test="key.id != null">
+            and client_id = #{key.id}::uuid
+        </if>
+        <if test="key.uid != null">
+            and client_uid = #{key.uid}
+        </if>
+        <if test="(key.id == null and key.uid != null) and key.email != null">
+            and client_email = #{key.email}
+        </if>
+        <![CDATA[
+              order by update_ts desc nulls last
+              limit 1
+            ) sub
+            where cp.delete_ts is null
+              and (cp.client_id is not distinct from sub.client_id)
+              and (cp.client_uid is not distinct from sub.client_uid)
+              and (cp.client_email is not distinct from sub.client_email)
+        ]]>
     </update>
 
-    <delete id="deleteClientPrefs" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
-        delete from client_prefs where
-        <choose>
-            <when test="id != null">
-                client_id = #{id}::uuid
-            </when>
-            <when test="uid != null">
-                client_uid = #{uid}
-            </when>
-            <otherwise>
-                client_email = #{email}
-            </otherwise>
-        </choose>
-    </delete>
+    <update id="deleteClientPrefs" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+        update client_prefs
+        set delete_ts = now(), deleted_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}'
+        where delete_ts is null
+        <if test="id != null">
+            and client_id = #{id}::uuid
+        </if>
+        <if test="uid != null">
+            and client_uid = #{uid}
+        </if>
+        <if test="(id == null and uid != null) and email != null">
+            and client_email = #{email}
+        </if>
+    </update>
 
 </mapper>

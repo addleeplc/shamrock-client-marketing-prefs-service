@@ -1,5 +1,7 @@
 package com.haulmont.shamrock.client.marketing.prefs.db;
 
+import com.haulmont.monaco.ServiceException;
+import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.shamrock.client.marketing.prefs.db.mybatis.ClientMarketingPrefsSqlSessionFactory;
 import com.haulmont.shamrock.client.marketing.prefs.model.ClientId;
 import com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs;
@@ -50,18 +52,23 @@ public class ClientPrefsRepository extends AbstractRepository<ClientMarketingPre
         }
     }
 
-    private class InsertClientPrefsCommand extends Command<Integer> {
-        private final ClientPrefs clientPrefs;
-
+    private class InsertClientPrefsCommand extends BatchCommand {
         InsertClientPrefsCommand(ClientPrefs clientPrefs) {
             super("addClientPrefs");
 
-            this.clientPrefs = clientPrefs;
-        }
+            addAction(((session, stats) ->
+                    session.update(getStatementName("recover-deleted"), clientPrefs)
+            ));
 
-        @Override
-        protected Integer __execute(SqlSession sqlSession) {
-            return sqlSession.insert(getName(), clientPrefs);
+            addAction(((session, stats) -> {
+                if (stats.getAffected() == 1) {
+                    return;
+                } else if (stats.getAffected() > 1) {
+                    throw Errors.TOO_MANY_CLIENTS;
+                }
+
+                session.insert(getStatementName("add-new"), clientPrefs);
+            }));
         }
     }
 
@@ -83,7 +90,12 @@ public class ClientPrefsRepository extends AbstractRepository<ClientMarketingPre
                     "value", patch
             );
 
-            return sqlSession.update(getName(), params);
+            int updated = sqlSession.update(getName(), params);
+            if (updated > 1) {
+                throw Errors.TOO_MANY_CLIENTS;
+            }
+
+            return updated;
         }
     }
 
@@ -98,7 +110,11 @@ public class ClientPrefsRepository extends AbstractRepository<ClientMarketingPre
 
         @Override
         protected Integer __execute(SqlSession sqlSession) {
-            return sqlSession.delete(getName(), id);
+            return sqlSession.update(getName(), id);
         }
+    }
+
+    public static class Errors {
+        public static final RuntimeException TOO_MANY_CLIENTS = new ServiceException(ErrorCode.BAD_REQUEST, "Too many clients to update");
     }
 }
