@@ -8,6 +8,7 @@ package com.haulmont.shamrock.client.marketing.prefs;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.eventbus.Subscribe;
 import com.haulmont.bali.lang.BooleanUtils;
 import com.haulmont.bali.lang.StringUtils;
 import com.haulmont.monaco.ServiceException;
@@ -20,9 +21,12 @@ import com.haulmont.shamrock.client.marketing.prefs.db.ClientPrefsRepository;
 import com.haulmont.shamrock.client.marketing.prefs.dto.*;
 import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences.CategoryOptIn;
 import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences.ChannelOptIn;
+import com.haulmont.shamrock.client.marketing.prefs.eventbus.IdentityDeletionEventBus;
 import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
 import com.haulmont.shamrock.client.marketing.prefs.legacy.ShamrockClientPrefsService;
+import com.haulmont.shamrock.client.marketing.prefs.mq.ClientDataIdentityPublishService;
 import com.haulmont.shamrock.client.marketing.prefs.mq.ClientPrefsMessagingService;
+import com.haulmont.shamrock.client.marketing.prefs.mq.dto.*;
 import com.haulmont.shamrock.client.marketing.prefs.utils.ClientPrefsUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -35,6 +39,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("UnstableApiUsage")
 @Component
 public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPrefs, ClientPrefsCache> {
     @Inject
@@ -53,6 +58,12 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
     private PreferencesCache preferencesCache;
 
     @Inject
+    private IdentityDeletionEventBus identityDeletionEventBus;
+
+    @Inject
+    private ClientDataIdentityPublishService clientDataIdentityPublishService;
+
+    @Inject
     private ChannelsService channelsService;
 
     @Inject
@@ -66,6 +77,14 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
 
     public ClientPrefsService(ClientPrefsCache cache) {
         super(cache);
+    }
+
+    public void start() {
+        identityDeletionEventBus.register(this);
+    }
+
+    public void stop() {
+        identityDeletionEventBus.unregister(this);
     }
 
     public ClientPrefs get(ClientId id) {
@@ -437,6 +456,33 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
                 refineCategoryOptIns(child, toCategoryOptInMap, categoryChannelFilter);
             }
         }
+    }
+
+    @Subscribe
+    private void handleIdentityDeletionEnqueued(IdentityDeletionEnqueued message) {
+        UUID taskId = UUID.randomUUID();
+        String task = "delete.client.marketingPreferences";
+
+        AbstractIdentityDeletionMessage.Data data = message.getData();
+        UUID requestId = data.getIdentityDeletionRequestId();
+        clientDataIdentityPublishService.publish(PersonalDataDeletionEnqueued.build(taskId, task, requestId));
+
+        ClientId clientId = new ClientId();
+        clientId.setId(UUID.fromString(data.getIdentity().getId()));
+
+        try {
+            delete(clientId);
+
+            logger.debug("Client marketing preferences was deleted (clientId: {})", clientId);
+
+        } catch (Throwable e) {
+            logger.warn("Deletion client marketing preferences failed for the request (requestId: {}, clientId: {})", requestId, clientId, e);
+
+            clientDataIdentityPublishService.publishAsync(PersonalDataDeletionFailed.build(taskId, task, requestId));
+            return;
+        }
+
+        clientDataIdentityPublishService.publishAsync(PersonalDataDeletionCompleted.build(taskId, task, requestId));
     }
 
     public static class Errors {

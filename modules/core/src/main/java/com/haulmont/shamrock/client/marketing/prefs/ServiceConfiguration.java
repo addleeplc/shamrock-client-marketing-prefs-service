@@ -7,6 +7,15 @@ import org.picocontainer.annotations.Component;
 @Config
 @Component
 public interface ServiceConfiguration {
+    String MQ_CLIENT_IDENTITY_DELETION_SERVER_NAME = "mq.clientIdentityDeletion.serverName";
+    String MQ_CLIENT_IDENTITY_DELETION_CONSUMER = "mq.clientIdentityDeletion.consumer";
+
+    @Property("mq.clientIdentity.personalDataDeletion.serverName")
+    String getMQPersonalDataDeletionServerName();
+
+    @Property("mq.clientIdentity.personalDataDeletion.exchange")
+    String getMQPersonalDataDeletionExchange();
+
     @Property("caches.channels.expireAfterWriteSeconds")
     Long getChannelsCacheExpirySeconds();
 
