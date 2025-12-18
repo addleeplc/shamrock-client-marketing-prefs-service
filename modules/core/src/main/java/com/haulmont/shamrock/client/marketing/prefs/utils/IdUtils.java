@@ -6,8 +6,8 @@
 
 package com.haulmont.shamrock.client.marketing.prefs.utils;
 
-import com.haulmont.shamrock.client.marketing.prefs.dto.Identifier;
-import com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId;
+import com.haulmont.shamrock.client.marketing.prefs.model.Identifier;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.ModelInstanceId;
 
 public final class IdUtils {
     private IdUtils() {

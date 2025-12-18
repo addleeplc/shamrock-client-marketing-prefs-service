@@ -5,9 +5,9 @@ import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.monaco.response.Response;
 import com.haulmont.shamrock.client.marketing.prefs.CategoriesService;
 import com.haulmont.shamrock.client.marketing.prefs.dto.CategoriesResponse;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Category;
+import com.haulmont.shamrock.client.marketing.prefs.model.Category;
 import com.haulmont.shamrock.client.marketing.prefs.dto.CategoryResponse;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Identifier;
+import com.haulmont.shamrock.client.marketing.prefs.model.Identifier;
 import com.haulmont.shamrock.client.marketing.prefs.utils.CategoryUtils;
 
 import javax.inject.Inject;

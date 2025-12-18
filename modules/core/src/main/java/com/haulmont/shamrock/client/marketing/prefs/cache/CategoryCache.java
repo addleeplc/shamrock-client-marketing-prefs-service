@@ -7,8 +7,8 @@
 package com.haulmont.shamrock.client.marketing.prefs.cache;
 
 import com.haulmont.shamrock.client.marketing.prefs.ServiceConfiguration;
-import com.haulmont.shamrock.client.marketing.prefs.db.CategoriesRepository;
-import com.haulmont.shamrock.client.marketing.prefs.model.Category;
+import com.haulmont.shamrock.client.marketing.prefs.storage.CategoriesRepository;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.Category;
 import org.picocontainer.annotations.Component;
 import org.picocontainer.annotations.Inject;
 

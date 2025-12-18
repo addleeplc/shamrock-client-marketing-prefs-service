@@ -5,6 +5,8 @@ import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.monaco.response.Response;
 import com.haulmont.shamrock.client.marketing.prefs.ClientPrefsService;
 import com.haulmont.shamrock.client.marketing.prefs.dto.*;
+import com.haulmont.shamrock.client.marketing.prefs.model.ClientId;
+import com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs;
 import com.haulmont.shamrock.client.marketing.prefs.utils.ParamUtils;
 
 import javax.inject.Inject;

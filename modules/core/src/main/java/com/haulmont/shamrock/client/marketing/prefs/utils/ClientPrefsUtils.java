@@ -11,9 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.haulmont.monaco.ServiceException;
 import com.haulmont.monaco.jackson.ObjectMapperFactory;
 import com.haulmont.monaco.response.ErrorCode;
-import com.haulmont.shamrock.client.marketing.prefs.dto.ClientId;
-import com.haulmont.shamrock.client.marketing.prefs.dto.ClientPrefs;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences;
+import com.haulmont.shamrock.client.marketing.prefs.model.ClientId;
+import com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs;
+import com.haulmont.shamrock.client.marketing.prefs.model.Preferences;
 
 public final class ClientPrefsUtils {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapperFactory().mapper();
@@ -21,12 +21,12 @@ public final class ClientPrefsUtils {
     private ClientPrefsUtils() {
     }
 
-    public static com.haulmont.shamrock.client.marketing.prefs.model.ClientId convert(ClientId id) {
+    public static com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId convert(ClientId id) {
         if (id == null) {
             return null;
         }
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientId res = new com.haulmont.shamrock.client.marketing.prefs.model.ClientId();
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId res = new com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId();
 
         res.setId(id.getId());
         res.setUid(id.getUid());
@@ -35,16 +35,16 @@ public final class ClientPrefsUtils {
         return res;
     }
 
-    public static com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs convert(ClientId id, Preferences preferences) {
+    public static com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs convert(ClientId id, Preferences preferences) {
         return convert(id, preferences, null);
     }
 
-    public static com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs convert(ClientId id, Preferences preferences, Class<?> view) {
+    public static com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs convert(ClientId id, Preferences preferences, Class<?> view) {
         if (id == null) {
             return null;
         }
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs res = new com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs();
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs res = new com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs();
 
         res.setClientId(id.getId());
         res.setClientUid(id.getUid());
@@ -60,7 +60,7 @@ public final class ClientPrefsUtils {
         return res;
     }
 
-    public static ClientPrefs convert(com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs) {
+    public static ClientPrefs convert(com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs prefs) {
         if (prefs == null) {
             return null;
         }

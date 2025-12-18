@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.db.mybatis">
+<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.mybatis">
 
-    <resultMap id="ClientPrefsMap" type="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
+    <resultMap id="ClientPrefsMap" type="com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs">
         <id property="clientId" column="client_id"/>
         <result property="clientUid" column="client_uid"/>
         <result property="clientEmail" column="client_email"/>
@@ -17,7 +17,7 @@
     </sql>
 
     <select id="getClientPrefs" resultMap="ClientPrefsMap"
-            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId">
         <include refid="selectClientPrefs"/>
         where delete_ts is null
         <if test="id != null">
@@ -33,13 +33,13 @@
         limit 1
     </select>
 
-    <update id="addClientPrefs-recover-deleted" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
+    <update id="addClientPrefs-recover-deleted" parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs">
         <![CDATA[
             update client_prefs cp set
                 create_ts = now(),
-                created_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+                created_by = '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}',
                 update_ts = now(),
-                updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+                updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}',
                 delete_ts = null,
                 deleted_by = null,
         ]]>
@@ -75,7 +75,7 @@
         ]]>
     </update>
 
-    <insert id="addClientPrefs-add-new" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs">
+    <insert id="addClientPrefs-add-new" parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs">
         <![CDATA[
             insert into client_prefs (client_id, client_uid, client_email, create_ts, created_by, update_ts, updated_by, prefs)
             values (
@@ -91,7 +91,7 @@
         update client_prefs cp set
         <trim suffixOverrides=",">
             update_ts = now(),
-            updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+            updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}',
             <if test="value.clientId != null">
                 client_id = #{value.clientId}::uuid,
             </if>
@@ -131,9 +131,9 @@
         ]]>
     </update>
 
-    <update id="deleteClientPrefs" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+    <update id="deleteClientPrefs" parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId">
         update client_prefs
-        set delete_ts = now(), deleted_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}'
+        set delete_ts = now(), deleted_by = '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}'
         where delete_ts is null
         <if test="id != null">
             and client_id = #{id}::uuid

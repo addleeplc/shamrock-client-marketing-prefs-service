@@ -7,7 +7,7 @@
 package com.haulmont.shamrock.client.marketing.prefs.cache;
 
 import com.haulmont.shamrock.client.marketing.prefs.ServiceConfiguration;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Client;
+import com.haulmont.shamrock.client.marketing.prefs.model.Client;
 import com.haulmont.shamrock.client.marketing.prefs.services.ClientRegistryService;
 import org.picocontainer.annotations.Component;
 import org.picocontainer.annotations.Inject;

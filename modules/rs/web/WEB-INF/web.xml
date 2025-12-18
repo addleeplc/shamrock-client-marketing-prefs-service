@@ -20,11 +20,11 @@
     </listener>
 
     <servlet>
-        <servlet-name>com.haulmont.shamrock.client.marketing.prefs.ServiceApplication</servlet-name>
+        <servlet-name>com.haulmont.shamrock.client.marketing.prefs.ClientMarketingPrefsApplication</servlet-name>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>com.haulmont.shamrock.client.marketing.prefs.ServiceApplication</servlet-name>
+        <servlet-name>com.haulmont.shamrock.client.marketing.prefs.ClientMarketingPrefsApplication</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 

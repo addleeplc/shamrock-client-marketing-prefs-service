@@ -6,12 +6,27 @@
 
 package com.haulmont.shamrock.client.marketing.prefs.model;
 
+import com.fasterxml.jackson.annotation.*;
+import com.haulmont.bali.lang.StringUtils;
+import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
+
 import java.util.Objects;
 import java.util.UUID;
 
+@JsonPropertyOrder({"id", "uid", "email"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClientId {
-    private UUID id;
-    private String uid;
+    @JsonProperty("id")
+    @JsonView(Views.Store.class)
+    protected UUID id;
+
+    @JsonProperty("uid")
+    @JsonView(Views.Store.class)
+    protected String uid;
+
+    @JsonProperty("email")
+    @JsonView(Views.Store.class)
     private String email;
 
     public UUID getId() {
@@ -40,12 +55,17 @@ public class ClientId {
 
     @Override
     public String toString() {
-        if (id != null) {
-            return id.toString();
+        if (getId() != null) {
+            return getId().toString();
         }
 
-        return uid == null ? email : uid;
+        if (getUid() != null) {
+            return getUid();
+        }
+
+        return email;
     }
+
 
     @Override
     public boolean equals(Object object) {
@@ -70,5 +90,10 @@ public class ClientId {
         }
 
         return getUid() != null ? getUid().hashCode() : Objects.hash(getEmail());
+    }
+
+    @JsonIgnore
+    public boolean isDefined() {
+        return id != null || StringUtils.isNotBlank(uid) || StringUtils.isNotBlank(email);
     }
 }

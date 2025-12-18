@@ -12,7 +12,7 @@ import com.haulmont.monaco.config.annotations.Property;
 import com.haulmont.monaco.executors.ExecutorsService;
 import com.haulmont.monaco.mq.messages.AbstractMessage;
 import com.haulmont.monaco.rabbit.mq.RabbitMqResourceSupplier;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences;
+import com.haulmont.shamrock.client.marketing.prefs.model.Preferences;
 import com.haulmont.shamrock.client.marketing.prefs.mq.dto.ClientMarketingPrefsUpdated;
 import org.picocontainer.annotations.Component;
 import org.picocontainer.annotations.Inject;

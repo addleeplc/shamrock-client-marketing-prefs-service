@@ -9,7 +9,7 @@ package com.haulmont.shamrock.client.marketing.prefs.services;
 import com.haulmont.bali.lang.StringUtils;
 import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.monaco.unirest.ServiceCallUtils;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Client;
+import com.haulmont.shamrock.client.marketing.prefs.model.Client;
 import com.haulmont.shamrock.client.marketing.prefs.services.dto.client_registry.ClientResponse;
 import com.haulmont.shamrock.client.marketing.prefs.services.dto.client_registry.ClientsResponse;
 import kong.unirest.HttpRequest;

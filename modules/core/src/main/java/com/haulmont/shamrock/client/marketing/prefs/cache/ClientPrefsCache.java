@@ -7,8 +7,9 @@
 package com.haulmont.shamrock.client.marketing.prefs.cache;
 
 import com.haulmont.shamrock.client.marketing.prefs.ServiceConfiguration;
-import com.haulmont.shamrock.client.marketing.prefs.db.ClientPrefsRepository;
-import com.haulmont.shamrock.client.marketing.prefs.dto.ClientPrefs;
+import com.haulmont.shamrock.client.marketing.prefs.storage.ClientPrefsRepository;
+import com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId;
 import com.haulmont.shamrock.client.marketing.prefs.utils.ClientPrefsUtils;
 import org.picocontainer.annotations.Component;
 import org.picocontainer.annotations.Inject;
@@ -29,8 +30,8 @@ public class ClientPrefsCache extends AbstractCache.ByClientId<ClientPrefs> {
                 return null;
             }
 
-            com.haulmont.shamrock.client.marketing.prefs.model.ClientId clientId = ClientPrefsUtils.convert(id);
-            com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = clientPrefsRepository.get(clientId);
+            ClientId clientId = ClientPrefsUtils.convert(id);
+            com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs prefs = clientPrefsRepository.get(clientId);
 
             return ClientPrefsUtils.convert(prefs);
         });

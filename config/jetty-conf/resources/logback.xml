@@ -12,12 +12,10 @@
 
     <property name="monaco-rs.level.MaskingLoggerInterceptor" value="DEBUG"/>
 
-    <logger name="com.haulmont.shamrock.client.marketing.prefs" level="debug">
+    <logger name="com.haulmont.shamrock.client.marketing.prefs" level="DEBUG">
         <appender-ref ref="MONACO_APP"/>
     </logger>
 
-    <logger name="org.mybatis" level="DEBUG"/>
-    <logger name="java.sql" level="DEBUG"/>
-    <logger name="jdbc.sqlonly" level="DEBUG"/>
+    <logger name="com.haulmont.shamrock.client.marketing.prefs.mybatis" level="WARN"/>
 
 </configuration>

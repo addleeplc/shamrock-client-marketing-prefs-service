@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.db.mybatis">
+<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.mybatis">
 
-    <resultMap id="ChannelMap" type="com.haulmont.shamrock.client.marketing.prefs.model.Channel">
+    <resultMap id="ChannelMap" type="com.haulmont.shamrock.client.marketing.prefs.storage.model.Channel">
         <id property="id" column="id"/>
         <result property="createTs" column="create_ts"/>
         <result property="createdBy" column="created_by"/>
@@ -25,7 +25,7 @@
     </select>
 
     <select id="getChannel" resultMap="ChannelMap"
-            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId">
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ModelInstanceId">
         select id, create_ts, created_by, code, name
         from channels
         where delete_ts is null
@@ -39,7 +39,7 @@
         </choose>
     </select>
 
-    <insert id="addChannel" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.Channel"
+    <insert id="addChannel" parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.Channel"
             useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
             insert into channels as ch (id, create_ts, created_by, update_ts, updated_by, code, name)
@@ -60,7 +60,7 @@
         update channels set
         <trim  suffixOverrides=",">
             update_ts = now(),
-            updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+            updated_by = '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}',
             <if test="value.name != null">
                 name = #{value.name},
             </if>
@@ -76,9 +76,9 @@
         </choose>
     </update>
 
-    <delete id="deleteChannel" parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId">
+    <delete id="deleteChannel" parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ModelInstanceId">
         update channels
-        set delete_ts = now(), deleted_by = '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}'
+        set delete_ts = now(), deleted_by = '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}'
         where delete_ts is null
         <choose>
             <when test="id != null">

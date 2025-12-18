@@ -8,7 +8,6 @@ package com.haulmont.shamrock.client.marketing.prefs;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.eventbus.Subscribe;
 import com.haulmont.bali.lang.BooleanUtils;
 import com.haulmont.bali.lang.StringUtils;
 import com.haulmont.monaco.ServiceException;
@@ -17,16 +16,12 @@ import com.haulmont.shamrock.client.marketing.prefs.cache.ClientByIdCache;
 import com.haulmont.shamrock.client.marketing.prefs.cache.ClientPrefsCache;
 import com.haulmont.shamrock.client.marketing.prefs.cache.ClientsByEmailCache;
 import com.haulmont.shamrock.client.marketing.prefs.cache.PreferencesCache;
-import com.haulmont.shamrock.client.marketing.prefs.db.ClientPrefsRepository;
-import com.haulmont.shamrock.client.marketing.prefs.dto.*;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences.CategoryOptIn;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences.ChannelOptIn;
-import com.haulmont.shamrock.client.marketing.prefs.eventbus.IdentityDeletionEventBus;
+import com.haulmont.shamrock.client.marketing.prefs.model.*;
+import com.haulmont.shamrock.client.marketing.prefs.storage.ClientPrefsRepository;
+import com.haulmont.shamrock.client.marketing.prefs.model.Preferences.CategoryOptIn;
+import com.haulmont.shamrock.client.marketing.prefs.model.Preferences.ChannelOptIn;
 import com.haulmont.shamrock.client.marketing.prefs.jackson.Views;
-import com.haulmont.shamrock.client.marketing.prefs.legacy.ShamrockClientPrefsService;
-import com.haulmont.shamrock.client.marketing.prefs.mq.ClientDataIdentityPublishService;
 import com.haulmont.shamrock.client.marketing.prefs.mq.ClientPrefsMessagingService;
-import com.haulmont.shamrock.client.marketing.prefs.mq.dto.*;
 import com.haulmont.shamrock.client.marketing.prefs.utils.ClientPrefsUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,6 +37,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("UnstableApiUsage")
 @Component
 public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPrefs, ClientPrefsCache> {
+
     @Inject
     private Logger logger;
 
@@ -58,33 +54,21 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
     private PreferencesCache preferencesCache;
 
     @Inject
-    private IdentityDeletionEventBus identityDeletionEventBus;
-
-    @Inject
-    private ClientDataIdentityPublishService clientDataIdentityPublishService;
-
-    @Inject
     private ChannelsService channelsService;
 
     @Inject
     private CategoriesService categoriesService;
 
     @Inject
-    private ShamrockClientPrefsService shamrockClientPrefsService;
+    private LegacyClientPrefsService legacyClientPrefsService;
 
     @Inject
     private ClientPrefsMessagingService clientPrefsMessagingService;
 
+    //
+
     public ClientPrefsService(ClientPrefsCache cache) {
         super(cache);
-    }
-
-    public void start() {
-        identityDeletionEventBus.register(this);
-    }
-
-    public void stop() {
-        identityDeletionEventBus.unregister(this);
     }
 
     public ClientPrefs get(ClientId id) {
@@ -105,7 +89,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
 
         ClientPrefs clientPrefs = cache.get(id);
         if (clientPrefs == null) {
-            List<ChannelOptIn> legacyChannelPreferences = shamrockClientPrefsService.getPreferences(id);
+            List<ChannelOptIn> legacyChannelPreferences = legacyClientPrefsService.getPreferences(id);
             if (CollectionUtils.isEmpty(legacyChannelPreferences)) {
                 throw Errors.PREFS_NOT_FOUND;
             }
@@ -149,7 +133,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
         prepareClientId(id);
         prepareClientPrefs(preferences);
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferences, Views.Store.class);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferences, Views.Store.class);
 
         doCacheMutatingAction(id, () -> {
             if (!clientPrefsRepository.add(prefs)) {
@@ -168,8 +152,8 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
     public ClientPrefs reset(ClientId id) {
         prepareClientId(id);
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientId clientId = ClientPrefsUtils.convert(id);
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferencesCache.getDefault(), Views.Store.class);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId clientId = ClientPrefsUtils.convert(id);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, preferencesCache.getDefault(), Views.Store.class);
 
         doCacheMutatingAction(id, () -> {
             if (clientPrefsRepository.update(clientId, prefs) == 0) {
@@ -189,12 +173,12 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
         prepareClientId(id);
         prepareClientPrefs(preferences);
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientId clientId = ClientPrefsUtils.convert(id);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId clientId = ClientPrefsUtils.convert(id);
 
         ClientPrefs clientPrefs = get(id);
         Preferences updatedPrefs = applyPreferencesChanges(preferences, clientPrefs.getPreferences());
 
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, updatedPrefs, Views.Store.class);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientPrefs prefs = ClientPrefsUtils.convert(id, updatedPrefs, Views.Store.class);
 
         doCacheMutatingAction(id, () -> {
             if (clientPrefsRepository.update(clientId, prefs) == 0) {
@@ -237,7 +221,7 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
     }
 
     public void delete(ClientId id) {
-        com.haulmont.shamrock.client.marketing.prefs.model.ClientId clientId = ClientPrefsUtils.convert(id);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId clientId = ClientPrefsUtils.convert(id);
         doCacheMutatingAction(id, () -> {
             if (!clientPrefsRepository.delete(clientId)) {
                 throw Errors.PREFS_NOT_FOUND;
@@ -456,33 +440,6 @@ public class ClientPrefsService extends AbstractCachedService<ClientId, ClientPr
                 refineCategoryOptIns(child, toCategoryOptInMap, categoryChannelFilter);
             }
         }
-    }
-
-    @Subscribe
-    private void handleIdentityDeletionEnqueued(IdentityDeletionEnqueued message) {
-        UUID taskId = UUID.randomUUID();
-        String task = "delete.client.marketingPreferences";
-
-        AbstractIdentityDeletionMessage.Data data = message.getData();
-        UUID requestId = data.getIdentityDeletionRequestId();
-        clientDataIdentityPublishService.publish(PersonalDataDeletionEnqueued.build(taskId, task, requestId));
-
-        ClientId clientId = new ClientId();
-        clientId.setId(UUID.fromString(data.getIdentity().getId()));
-
-        try {
-            delete(clientId);
-
-            logger.debug("Client marketing preferences was deleted (clientId: {})", clientId);
-
-        } catch (Throwable e) {
-            logger.warn("Deletion client marketing preferences failed for the request (requestId: {}, clientId: {})", requestId, clientId, e);
-
-            clientDataIdentityPublishService.publishAsync(PersonalDataDeletionFailed.build(taskId, task, requestId));
-            return;
-        }
-
-        clientDataIdentityPublishService.publishAsync(PersonalDataDeletionCompleted.build(taskId, task, requestId));
     }
 
     public static class Errors {

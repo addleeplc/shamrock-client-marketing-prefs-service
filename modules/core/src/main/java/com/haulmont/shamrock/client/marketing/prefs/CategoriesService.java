@@ -4,11 +4,11 @@ import com.haulmont.monaco.ServiceException;
 import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.shamrock.client.marketing.prefs.cache.CategoryCache;
 import com.haulmont.shamrock.client.marketing.prefs.cache.ChannelCache;
-import com.haulmont.shamrock.client.marketing.prefs.db.CategoriesRepository;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Category;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Identifier;
-import com.haulmont.shamrock.client.marketing.prefs.model.CategoryChannel;
-import com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId;
+import com.haulmont.shamrock.client.marketing.prefs.storage.CategoriesRepository;
+import com.haulmont.shamrock.client.marketing.prefs.model.Category;
+import com.haulmont.shamrock.client.marketing.prefs.model.Identifier;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.CategoryChannel;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.ModelInstanceId;
 import com.haulmont.shamrock.client.marketing.prefs.mq.ModelEventsMessagingService;
 import com.haulmont.shamrock.client.marketing.prefs.mq.dto.CategoryCreated;
 import com.haulmont.shamrock.client.marketing.prefs.mq.dto.CategoryDeleted;
@@ -24,7 +24,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Component
-public class CategoriesService extends AbstractCachedService<ModelInstanceId, com.haulmont.shamrock.client.marketing.prefs.model.Category, CategoryCache> {
+public class CategoriesService extends AbstractCachedService<ModelInstanceId, com.haulmont.shamrock.client.marketing.prefs.storage.model.Category, CategoryCache> {
     @Inject
     private CategoriesRepository categoriesRepository;
 
@@ -49,7 +49,7 @@ public class CategoriesService extends AbstractCachedService<ModelInstanceId, co
     }
 
     public Category add(Category category) {
-        com.haulmont.shamrock.client.marketing.prefs.model.Category newCategory = CategoryUtils.convert(category);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.Category newCategory = CategoryUtils.convert(category);
 
         addCategory(newCategory);
 
@@ -60,7 +60,7 @@ public class CategoriesService extends AbstractCachedService<ModelInstanceId, co
         return res;
     }
 
-    private void addCategory(com.haulmont.shamrock.client.marketing.prefs.model.Category category) {
+    private void addCategory(com.haulmont.shamrock.client.marketing.prefs.storage.model.Category category) {
         if (category == null) {
             return;
         }
@@ -77,7 +77,7 @@ public class CategoriesService extends AbstractCachedService<ModelInstanceId, co
             category.setCode(id.getCode());
         }
 
-        com.haulmont.shamrock.client.marketing.prefs.model.Category catToUpdate = CategoryUtils.convert(category);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.Category catToUpdate = CategoryUtils.convert(category);
 
         updateCategory(catToUpdate);
 
@@ -88,20 +88,20 @@ public class CategoriesService extends AbstractCachedService<ModelInstanceId, co
         return res;
     }
 
-    public void updateCategory(com.haulmont.shamrock.client.marketing.prefs.model.Category category) {
+    public void updateCategory(com.haulmont.shamrock.client.marketing.prefs.storage.model.Category category) {
         prepareCategoryAndChannelIds(category, false);
 
         doCacheMutatingAction(category, () -> categoriesRepository.update(category));
 
         if (category.getChildren() != null) {
-            for (com.haulmont.shamrock.client.marketing.prefs.model.Category child : category.getChildren()) {
+            for (com.haulmont.shamrock.client.marketing.prefs.storage.model.Category child : category.getChildren()) {
                 updateCategory(child);
             }
         }
     }
 
     private void prepareCategoryAndChannelIds(
-            com.haulmont.shamrock.client.marketing.prefs.model.Category category, boolean newIdIfNotExists
+            com.haulmont.shamrock.client.marketing.prefs.storage.model.Category category, boolean newIdIfNotExists
     ) {
         if (category == null) {
             return;
@@ -129,7 +129,7 @@ public class CategoriesService extends AbstractCachedService<ModelInstanceId, co
         }
 
         if (category.getChildren() != null) {
-            for (com.haulmont.shamrock.client.marketing.prefs.model.Category child : category.getChildren()) {
+            for (com.haulmont.shamrock.client.marketing.prefs.storage.model.Category child : category.getChildren()) {
                 if (child.getParentCategoryId() == null) {
                     child.setParentCategoryId(category.getId());
                 }

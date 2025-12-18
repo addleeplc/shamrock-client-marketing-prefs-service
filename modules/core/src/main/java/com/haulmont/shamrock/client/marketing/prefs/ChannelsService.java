@@ -3,10 +3,10 @@ package com.haulmont.shamrock.client.marketing.prefs;
 import com.haulmont.monaco.ServiceException;
 import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.shamrock.client.marketing.prefs.cache.ChannelCache;
-import com.haulmont.shamrock.client.marketing.prefs.db.ChannelsRepository;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Channel;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Identifier;
-import com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId;
+import com.haulmont.shamrock.client.marketing.prefs.storage.ChannelsRepository;
+import com.haulmont.shamrock.client.marketing.prefs.model.Channel;
+import com.haulmont.shamrock.client.marketing.prefs.model.Identifier;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.ModelInstanceId;
 import com.haulmont.shamrock.client.marketing.prefs.mq.ModelEventsMessagingService;
 import com.haulmont.shamrock.client.marketing.prefs.mq.dto.ChannelCreated;
 import com.haulmont.shamrock.client.marketing.prefs.mq.dto.ChannelDeleted;
@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Component
-public class ChannelsService extends AbstractCachedService<ModelInstanceId, com.haulmont.shamrock.client.marketing.prefs.model.Channel, ChannelCache> {
+public class ChannelsService extends AbstractCachedService<ModelInstanceId, com.haulmont.shamrock.client.marketing.prefs.storage.model.Channel, ChannelCache> {
     @Inject
     private ChannelsRepository channelsRepository;
 
@@ -54,7 +54,7 @@ public class ChannelsService extends AbstractCachedService<ModelInstanceId, com.
             throw new IllegalArgumentException("Channel should be specified");
         }
 
-        com.haulmont.shamrock.client.marketing.prefs.model.Channel newChannel = ChannelUtils.convert(channel);
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.Channel newChannel = ChannelUtils.convert(channel);
 
         if (!channelsRepository.add(newChannel)) {
             throw new ServiceException(ErrorCode.SERVER_ERROR, "Fail to insert channel " + channel);

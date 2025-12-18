@@ -8,7 +8,7 @@ package com.haulmont.shamrock.client.marketing.prefs.mq.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Channel;
+import com.haulmont.shamrock.client.marketing.prefs.model.Channel;
 
 import java.util.function.Supplier;
 

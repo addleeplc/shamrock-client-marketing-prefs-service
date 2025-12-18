@@ -6,7 +6,7 @@
 
 package com.haulmont.shamrock.client.marketing.prefs.mq.dto;
 
-import com.haulmont.shamrock.client.marketing.prefs.dto.Preferences;
+import com.haulmont.shamrock.client.marketing.prefs.model.Preferences;
 
 public class ClientMarketingPrefsUpdated extends AbstractMessage<Preferences> {
 }

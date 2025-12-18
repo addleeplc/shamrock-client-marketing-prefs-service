@@ -3,7 +3,7 @@ package com.haulmont.shamrock.client.marketing.prefs.resources.v1;
 import com.haulmont.bali.lang.StringUtils;
 import com.haulmont.monaco.ServiceException;
 import com.haulmont.monaco.response.ErrorCode;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Identifier;
+import com.haulmont.shamrock.client.marketing.prefs.model.Identifier;
 import com.haulmont.shamrock.client.marketing.prefs.utils.ParamUtils;
 
 import java.util.UUID;

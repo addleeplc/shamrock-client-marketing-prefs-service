@@ -4,10 +4,10 @@ import com.haulmont.monaco.ServiceException;
 import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.monaco.response.Response;
 import com.haulmont.shamrock.client.marketing.prefs.ChannelsService;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Channel;
+import com.haulmont.shamrock.client.marketing.prefs.model.Channel;
 import com.haulmont.shamrock.client.marketing.prefs.dto.ChannelResponse;
 import com.haulmont.shamrock.client.marketing.prefs.dto.ChannelsResponse;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Identifier;
+import com.haulmont.shamrock.client.marketing.prefs.model.Identifier;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;

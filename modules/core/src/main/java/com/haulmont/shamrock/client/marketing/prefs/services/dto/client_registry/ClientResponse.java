@@ -8,7 +8,7 @@ package com.haulmont.shamrock.client.marketing.prefs.services.dto.client_registr
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.haulmont.monaco.response.Response;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Client;
+import com.haulmont.shamrock.client.marketing.prefs.model.Client;
 
 public class ClientResponse extends Response {
     @JsonProperty("client")

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.db.mybatis">
+<mapper namespace="com.haulmont.shamrock.client.marketing.prefs.mybatis">
 
-    <resultMap id="PreferencesMap" type="com.haulmont.shamrock.client.marketing.prefs.legacy.model.Preferences">
+    <resultMap id="PreferencesMap" type="com.haulmont.shamrock.client.marketing.prefs.storage.model.ShamrockClientPrefs">
         <id property="id" column="ID"/>
         <result property="uid" column="UID"/>
         <result property="prefs" column="PREFERENCES"/>
@@ -15,7 +15,7 @@
     </resultMap>
 
     <select id="loadImage" timeout="30" useCache="false" resultMap="PreferencesMap"
-            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId">
         <![CDATA[
             select
               i.UUID as ID,
@@ -34,7 +34,7 @@
     </select>
 
     <select id="loadPreferences" timeout="30" useCache="false" resultMap="PreferencesMap"
-            parameterType="com.haulmont.shamrock.client.marketing.prefs.model.ClientId">
+            parameterType="com.haulmont.shamrock.client.marketing.prefs.storage.model.ClientId">
         <![CDATA[
             select
               i.UUID as ID,

@@ -1,7 +1,7 @@
 package com.haulmont.shamrock.client.marketing.prefs.utils;
 
-import com.haulmont.shamrock.client.marketing.prefs.dto.Category;
-import com.haulmont.shamrock.client.marketing.prefs.model.CategoryChannel;
+import com.haulmont.shamrock.client.marketing.prefs.model.Category;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.CategoryChannel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +11,7 @@ public final class CategoryUtils {
     private CategoryUtils() {
     }
 
-    public static Category convert(com.haulmont.shamrock.client.marketing.prefs.model.Category category) {
+    public static Category convert(com.haulmont.shamrock.client.marketing.prefs.storage.model.Category category) {
         if (category == null) {
             return null;
         }
@@ -28,14 +28,14 @@ public final class CategoryUtils {
         return res;
     }
 
-    public static Collection<Category> convert(Collection<com.haulmont.shamrock.client.marketing.prefs.model.Category> categories) {
+    public static Collection<Category> convert(Collection<com.haulmont.shamrock.client.marketing.prefs.storage.model.Category> categories) {
         if (categories == null) {
             return null;
         }
 
         List<Category> res = new ArrayList<>(categories.size());
 
-        for (com.haulmont.shamrock.client.marketing.prefs.model.Category category : categories) {
+        for (com.haulmont.shamrock.client.marketing.prefs.storage.model.Category category : categories) {
             res.add(convert(category));
         }
 
@@ -76,12 +76,12 @@ public final class CategoryUtils {
         return res;
     }
 
-    public static com.haulmont.shamrock.client.marketing.prefs.model.Category convert(Category category) {
+    public static com.haulmont.shamrock.client.marketing.prefs.storage.model.Category convert(Category category) {
         if (category == null) {
             return null;
         }
 
-        com.haulmont.shamrock.client.marketing.prefs.model.Category res = new com.haulmont.shamrock.client.marketing.prefs.model.Category();
+        com.haulmont.shamrock.client.marketing.prefs.storage.model.Category res = new com.haulmont.shamrock.client.marketing.prefs.storage.model.Category();
 
         res.setId(category.getId());
         res.setCode(category.getCode());
@@ -107,12 +107,12 @@ public final class CategoryUtils {
         return res;
     }
 
-    public static Collection<com.haulmont.shamrock.client.marketing.prefs.model.Category> convertCategoriesToModel(Collection<Category> categories) {
+    public static Collection<com.haulmont.shamrock.client.marketing.prefs.storage.model.Category> convertCategoriesToModel(Collection<Category> categories) {
         if (categories == null) {
             return null;
         }
 
-        List<com.haulmont.shamrock.client.marketing.prefs.model.Category> res = new ArrayList<>(categories.size());
+        List<com.haulmont.shamrock.client.marketing.prefs.storage.model.Category> res = new ArrayList<>(categories.size());
 
         for (Category category : categories) {
             res.add(convert(category));
@@ -137,7 +137,7 @@ public final class CategoryUtils {
         return res;
     }
 
-    public static String print(com.haulmont.shamrock.client.marketing.prefs.model.Category category) {
+    public static String print(com.haulmont.shamrock.client.marketing.prefs.storage.model.Category category) {
         if (category == null) {
             return null;
         }

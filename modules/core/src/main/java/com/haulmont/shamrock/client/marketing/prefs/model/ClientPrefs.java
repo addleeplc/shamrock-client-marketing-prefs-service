@@ -6,43 +6,22 @@
 
 package com.haulmont.shamrock.client.marketing.prefs.model;
 
-import java.util.UUID;
+public class ClientPrefs extends ClientId {
+    private Preferences preferences;
 
-public class ClientPrefs {
-    private UUID clientId;
-    private String clientUid;
-    private String clientEmail;
-    private String prefs;
+    public ClientPrefs(ClientId clientId, Preferences preferences) {
+        this.setId(clientId.getId());
+        this.setUid(clientId.getUid());
+        this.setEmail(clientId.getEmail());
 
-    public UUID getClientId() {
-        return clientId;
+        this.preferences = preferences;
     }
 
-    public void setClientId(UUID clientId) {
-        this.clientId = clientId;
+    public Preferences getPreferences() {
+        return preferences;
     }
 
-    public String getClientUid() {
-        return clientUid;
-    }
-
-    public void setClientUid(String clientUid) {
-        this.clientUid = clientUid;
-    }
-
-    public String getClientEmail() {
-        return clientEmail;
-    }
-
-    public void setClientEmail(String clientEmail) {
-        this.clientEmail = clientEmail;
-    }
-
-    public String getPrefs() {
-        return prefs;
-    }
-
-    public void setPrefs(String prefs) {
-        this.prefs = prefs;
+    public void setPreferences(Preferences preferences) {
+        this.preferences = preferences;
     }
 }

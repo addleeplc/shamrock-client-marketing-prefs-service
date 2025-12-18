@@ -11,7 +11,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.haulmont.bali.lang.StringUtils;
 import com.haulmont.shamrock.client.marketing.prefs.ServiceConfiguration;
-import com.haulmont.shamrock.client.marketing.prefs.dto.Client;
+import com.haulmont.shamrock.client.marketing.prefs.model.Client;
 import com.haulmont.shamrock.client.marketing.prefs.services.ClientRegistryService;
 import org.picocontainer.annotations.Component;
 import org.picocontainer.annotations.Inject;
@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class ClientsByEmailCache implements CacheManagement<String, List<Client>> {
+public class ClientsByEmailCache implements Cache<String, List<Client>> {
     private static final long CLIENT_BY_EMAIL_CACHE_EXPIRY_SECONDS = 60L;
     private static final long CLIENT_BY_EMAIL_CACHE_MAX_SIZE = 10000L;
 

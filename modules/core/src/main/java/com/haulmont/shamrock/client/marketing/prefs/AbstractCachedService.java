@@ -6,9 +6,9 @@
 
 package com.haulmont.shamrock.client.marketing.prefs;
 
-import com.haulmont.shamrock.client.marketing.prefs.cache.CacheManagement;
+import com.haulmont.shamrock.client.marketing.prefs.cache.Cache;
 
-public abstract class AbstractCachedService<Key, Val, T extends CacheManagement<Key, Val>> {
+public abstract class AbstractCachedService<Key, Val, T extends Cache<Key, Val>> {
     protected final T cache;
 
     protected AbstractCachedService(T cache) {

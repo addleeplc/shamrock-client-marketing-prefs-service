@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.haulmont.monaco.response.ErrorCode;
 import com.haulmont.monaco.response.Response;
+import com.haulmont.shamrock.client.marketing.prefs.model.Category;
 
 import java.util.Collection;
 

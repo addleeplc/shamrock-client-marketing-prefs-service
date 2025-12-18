@@ -6,11 +6,10 @@
 
 package com.haulmont.shamrock.client.marketing.prefs.cache;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
-import com.haulmont.shamrock.client.marketing.prefs.dto.ClientId;
-import com.haulmont.shamrock.client.marketing.prefs.model.ModelInstanceId;
+import com.haulmont.shamrock.client.marketing.prefs.model.ClientId;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.ModelInstanceId;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,10 +18,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-public abstract class AbstractCache<Id, T extends Id> implements CacheManagement<Id, T> {
+public abstract class AbstractCache<Id, T extends Id> implements Cache<Id, T> {
     private final Function<Id, T> cacheFun;
 
-    protected AtomicReference<Cache<Id, T>> byIdRef = new AtomicReference<>();
+    protected AtomicReference<com.google.common.cache.Cache<Id, T>> byIdRef = new AtomicReference<>();
     protected Map<String, Index<?, T>> indexMap = Collections.synchronizedMap(new HashMap<>());
 
     protected AbstractCache(Function<Id, T> cacheFun) {
@@ -44,7 +43,7 @@ public abstract class AbstractCache<Id, T extends Id> implements CacheManagement
     protected abstract T getIndexed(Id id);
 
     protected void build() {
-        Cache<Id, T> byRowId =
+        com.google.common.cache.Cache<Id, T> byRowId =
                 CacheBuilder.newBuilder()
                         .expireAfterWrite(getExpiryInSeconds(), TimeUnit.SECONDS)
                         .maximumSize(getMaxSize())

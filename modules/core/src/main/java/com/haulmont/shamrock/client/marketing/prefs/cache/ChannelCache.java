@@ -7,8 +7,8 @@
 package com.haulmont.shamrock.client.marketing.prefs.cache;
 
 import com.haulmont.shamrock.client.marketing.prefs.ServiceConfiguration;
-import com.haulmont.shamrock.client.marketing.prefs.db.ChannelsRepository;
-import com.haulmont.shamrock.client.marketing.prefs.model.Channel;
+import com.haulmont.shamrock.client.marketing.prefs.storage.ChannelsRepository;
+import com.haulmont.shamrock.client.marketing.prefs.storage.model.Channel;
 import org.picocontainer.annotations.Component;
 import org.picocontainer.annotations.Inject;
 
