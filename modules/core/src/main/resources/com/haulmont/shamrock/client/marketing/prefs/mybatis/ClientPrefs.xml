@@ -80,8 +80,8 @@
             insert into client_prefs (client_id, client_uid, client_email, create_ts, created_by, update_ts, updated_by, prefs)
             values (
                 #{clientId}::uuid, #{clientUid}, #{clientEmail},
-                now(), '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
-                now(), '${@com.haulmont.shamrock.client.marketing.prefs.db.mybatis.Constants@USER_NAME}',
+                now(), '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}',
+                now(), '${@com.haulmont.shamrock.client.marketing.prefs.mybatis.Constants@USER_NAME}',
                 #{prefs}::jsonb
             )
         ]]>

@@ -32,7 +32,7 @@
     </environments>
 
     <mappers>
-        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/db/mybatis/legacy/ClientPrefsSybaseMapper.xml"/>
+        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/mybatis/legacy/ClientPrefsSybaseMapper.xml"/>
     </mappers>
 
 </configuration>

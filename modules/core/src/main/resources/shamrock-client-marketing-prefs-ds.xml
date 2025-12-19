@@ -25,9 +25,9 @@
     </environments>
 
     <mappers>
-        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/db/mybatis/Categories.xml"/>
-        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/db/mybatis/Channels.xml"/>
-        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/db/mybatis/ClientPrefs.xml"/>
+        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/mybatis/Categories.xml"/>
+        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/mybatis/Channels.xml"/>
+        <mapper resource="com/haulmont/shamrock/client/marketing/prefs/mybatis/ClientPrefs.xml"/>
     </mappers>
 
 </configuration>
